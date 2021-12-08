@@ -1,9 +1,6 @@
 //
 // Created by 35802 on 2021/12/8.
 //
-
-#ifndef HUFFMANCOMPRESS_BASICSTRUCT_H
-#define HUFFMANCOMPRESS_BASICSTRUCT_H
 //TO DO
 //结构体:压缩信息表
 //{
@@ -26,4 +23,16 @@
 //
 //
 // }
+#ifndef HUFFMANCOMPRESS_BASICSTRUCT_H
+#define HUFFMANCOMPRESS_BASICSTRUCT_H
+#include <stdio.h>
+#include <stdlib.h>
+#define MaxUnitSize 40
+typedef struct CompressNode{
+    char [MaxUnitSize]unit;
+    char [MaxUnitSize*8]BinaryCode;
+    int appearNum;
+}CompressNode;
+typedef
+
 #endif //HUFFMANCOMPRESS_BASICSTRUCT_H
