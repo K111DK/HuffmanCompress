@@ -74,6 +74,15 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/35802/Desktop/HuffmanCompress/BasicStruct.h">
+			<Option target="HuffmanCompress"/>
+		</Unit>
+		<Unit filename="C:/Users/35802/Desktop/HuffmanCompress/Compress.h">
+			<Option target="HuffmanCompress"/>
+		</Unit>
+		<Unit filename="C:/Users/35802/Desktop/HuffmanCompress/DeCompress.h">
+			<Option target="HuffmanCompress"/>
+		</Unit>
 		<Unit filename="C:/Users/35802/Desktop/HuffmanCompress/main.c">
 			<Option target="HuffmanCompress"/>
 		</Unit>

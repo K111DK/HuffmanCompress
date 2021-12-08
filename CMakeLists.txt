@@ -3,4 +3,4 @@ project(HuffmanCompress C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(HuffmanCompress main.c)
+add_executable(HuffmanCompress main.c BasicStruct.h Compress.h DeCompress.h)
