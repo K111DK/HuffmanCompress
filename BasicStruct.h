@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <string>
 #define MaxUnitSize 40
 
 typedef struct DynamicArray{
@@ -62,7 +63,23 @@ void DelectArray(DynamicArray*Darray,int num){
     }
 }
 
-
+char*StringCombina(char*a,char*b){
+    char *c = (char *) malloc(strlen(a) + strlen(b) + 1); //局部变量，用malloc申请内存
+    if (c == NULL) exit (1);
+    char *tempc = c; //把首地址存下来
+    if(a){
+    while (*a != '\0') {
+        *c++ = *a++;
+    }
+    }
+    if(b){
+    while ((*c++ = *b++) != '\0') {
+        ;
+    }
+    }
+    //注意，此时指针c已经指向拼接之后的字符串的结尾'\0' !
+    return tempc;//返回值是局部malloc申请的指针变量，需在函数调用结束后free之
+}
 
 
 typedef struct CompressNode{
@@ -76,6 +93,7 @@ typedef struct CompressInfo{
     int HuffBranch;//(huffman树叉数)
     int TotalCharNum;//文件大小(字节)
     int UnitNum;
+    char name[30];
     char  Extension[10];//后缀名
     CompressNode*UnitSet;//符号单元
 }CompressInfo;

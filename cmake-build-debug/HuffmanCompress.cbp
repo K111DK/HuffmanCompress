@@ -86,6 +86,9 @@
 		<Unit filename="C:/Users/35802/Desktop/HuffmanCompress/main.c">
 			<Option target="HuffmanCompress"/>
 		</Unit>
+		<Unit filename="C:/Users/35802/Desktop/HuffmanCompress/utils.h">
+			<Option target="HuffmanCompress"/>
+		</Unit>
 		<Unit filename="C:/Users/35802/Desktop/HuffmanCompress/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
