@@ -29,39 +29,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <string>
+#include <string.h>
 #define MaxUnitSize 40
 
-typedef struct DynamicArray{
-    HuffmanNode**Array;
-    int PreviousSize;
-}DynamicArray;
-DynamicArray* Init(int initSize){
-    DynamicArray*Darray=(DynamicArray*) malloc(sizeof (DynamicArray));
-    Darray->PreviousSize=initSize;
-    Darray->Array=(HuffmanNode**) malloc(sizeof(HuffmanNode*)*initSize);
-}
-void AssertArray(DynamicArray*Darray,int num,HuffmanNode*node){
-    if(num>=Darray->PreviousSize){
-        Darray->PreviousSize=num+1;
-        Darray->Array= realloc(Darray->Array,(num+1)*sizeof (HuffmanNode*));
-    }
-    Darray->Array[num]=node;
-}
-HuffmanNode* ReadArray(DynamicArray*Darray,int num){
-    if(num>=Darray->PreviousSize){
-        return NULL;
-    }else{
-        return Darray[num];
-    }
-}
-void DelectArray(DynamicArray*Darray,int num){
-    if(num>=Darray->PreviousSize){
-        return;
-    }else{
-        Darray->Array[num]=NULL;
-    }
-}
+
 
 char*StringCombina(char*a,char*b){
     char *c = (char *) malloc(strlen(a) + strlen(b) + 1); //局部变量，用malloc申请内存
@@ -109,5 +80,34 @@ typedef struct HuffmanTree{
     int deep;
     int branch;
 }HuffmanTree;
-
+typedef struct DynamicArray{
+    HuffmanNode**Array;
+    int PreviousSize;
+}DynamicArray;
+DynamicArray* Init(int initSize){
+    DynamicArray*Darray=(DynamicArray*) malloc(sizeof (DynamicArray));
+    Darray->PreviousSize=initSize;
+    Darray->Array=(HuffmanNode**) malloc(sizeof(HuffmanNode*)*initSize);
+}
+void AssertArray(DynamicArray*Darray,int num,HuffmanNode*node){
+    if(num>=Darray->PreviousSize){
+        Darray->PreviousSize=num+1;
+        Darray->Array= realloc(Darray->Array,(num+1)*sizeof (HuffmanNode*));
+    }
+    Darray->Array[num]=node;
+}
+HuffmanNode* ReadArray(DynamicArray*Darray,int num){
+    if(num>=Darray->PreviousSize){
+        return NULL;
+    }else{
+        return Darray->Array[num];
+    }
+}
+void DelectArray(DynamicArray*Darray,int num){
+    if(num>=Darray->PreviousSize){
+        return;
+    }else{
+        Darray->Array[num]=NULL;
+    }
+}
 #endif //HUFFMANCOMPRESS_BASICSTRUCT_H

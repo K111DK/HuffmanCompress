@@ -44,7 +44,6 @@
 //
 #ifndef HUFFMANCOMPRESS_COMPRESS_H
 #define HUFFMANCOMPRESS_COMPRESS_H
-#include "BasicStruct.h"
 #include "utils.h"
 CompressInfo *MapConstruct(int basicUnitSize,int BranchSize,char*originPath);
 HuffmanTree *HuffmanTreeConstruct(CompressInfo*CInfo);
@@ -57,8 +56,9 @@ CompressInfo *HeadInfoWread(FILE*fp);
 void HeadInfoWrite(FILE*fp,CompressInfo*Info);
 void WriteString(FILE*fp,char*string);
 char*GetEle(char *input,int mode,CompressInfo*CInfo);
-char ReadString(FILE*fp,double basicUnitSize);
+char*ReadString(FILE*fp,double basicUnitSize);
 void CompressUnitInsert(char InsertUnit[MaxUnitSize],CompressInfo*CInfo){//将基本符号单元插入
+    int i=0;
     if(CInfo->TotalCharNum==1){
         CInfo->UnitSet= (CompressNode *)malloc(sizeof (CompressNode));
         CInfo->UnitSet->appearNum=1;
@@ -68,16 +68,14 @@ void CompressUnitInsert(char InsertUnit[MaxUnitSize],CompressInfo*CInfo){//将�
     }
     else{//单元集中已存在
         for(i=0;i<=CInfo->TotalCharNum-2;++i){
-            if(strcmp(InsertUnit,CInfo->UnitSet[i])==0){
-                    CompressNode *node;
-                    node=CInfo->UnitSet[i];
-                    ++node->appearNum;
+            if(strcmp(InsertUnit,CInfo->UnitSet[i].unit)==0){
+                    ++CInfo->UnitSet[i].appearNum;
                 return;
             }
         }//不存在
-        CInfo->UnitSet=realloc(CInfo->UnitSet,CInfo->TotalCharNum);
-        strcpy(InsertUnit,CInfo->UnitSet[CInfo->TotalCharNum-1].unit);
-        CInfo->UnitSet[CInfo->TotalCharNum-1].appearNum=1;
+        CInfo->UnitSet=realloc(CInfo->UnitSet,(CInfo->UnitNum+1)*sizeof (CompressNode));
+        strcpy(CInfo->UnitSet[CInfo->UnitNum].unit,InsertUnit);
+        CInfo->UnitSet[CInfo->UnitNum].appearNum=1;
         ++CInfo->UnitNum;
         return;
     }
@@ -87,26 +85,35 @@ void CompressUnitInsert(char InsertUnit[MaxUnitSize],CompressInfo*CInfo){//将�
 CompressInfo *MapConstruct(int basicUnitSize,int BranchSize,char*originPath){
     FILE *fp;
     char *p;
-    fp= fopen(originPath,"rb+");
+    printf("Map constructing 1\n");
+    fp= fopen("C:\\Users\\35802\\Desktop\\HuffmanCompress\\bee1.mp4","rb+");
+    if(fp==NULL){
+        printf("fail to open\n");
+        exit(0);
+    }
     CompressInfo *CInfo=(CompressInfo*) malloc(sizeof (CompressInfo));
     CInfo->BasicUnitSize=basicUnitSize;
     CInfo->HuffBranch=BranchSize;
     CInfo->TotalCharNum=0;
+    CInfo->UnitNum=0;
     //记录后缀名
-    int i=j=z=0;
-    for(p=originPath;*p!='\0';++p,++i){}
-    for(j=i;originPath[i]!='.';--j){}
-    for(z=j+1;z!=i;z++){
-        strcat(CInfo->Extension,originPath[z]);
-    }
+    int i,j,z;
+    i=j=z=0;
+
+//    for(p=originPath;*p!='\0';++p,++i){}
+//    for(j=i;originPath[i]!='.';--j){}
+//    for(z=j+1;z!=i;z++){
+//        strcat(CInfo->Extension,originPath[z]);
+//    }
     //开始文件记录
-    double basicUnitSize=CInfo->BasicUnitSize;
+    if(basicUnitSize-(double)((int)basicUnitSize)!=0){
     char temp[basicUnitSize*2];
     char temp1[(int)basicUnitSize+1];
     char temp2[(int)basicUnitSize+1];
-    while(!feof(fpin)){
-        strcpy(temp, ReadString(fp,basicUnitSize));
-        if(!feof(fpin)){
+    printf("Map constructing2\n");
+    while(!feof(fp)){
+        strcpy(temp, ReadString(fp, basicUnitSize));
+        if(!feof(fp)){
             strcpy(temp1,temp);
             strcpy(temp2,temp+basicUnitSize);
             CompressUnitInsert(temp1,CInfo);
@@ -115,23 +122,42 @@ CompressInfo *MapConstruct(int basicUnitSize,int BranchSize,char*originPath){
             CompressUnitInsert(temp,CInfo);
         }
     }
+    }else{
+        char temp[basicUnitSize*2];
+        char temp1[(int)basicUnitSize];
+        char temp2[(int)basicUnitSize];
+        printf("Map constructing2\n");
+        while(!feof(fp)){
+            strcpy(temp, ReadString(fp, basicUnitSize));
+            if(!feof(fp)){
+                strcpy(temp1,temp);
+                strcpy(temp2,temp+basicUnitSize);
+                CompressUnitInsert(temp1,CInfo);
+                CompressUnitInsert(temp2,CInfo);
+            }else{
+                CompressUnitInsert(temp,CInfo);
+            }
+        }
+    }
+    printf("Map construct done!\n");
     fclose(fp);
 }
 
 HuffmanTree *HuffmanTreeConstruct(CompressInfo*CInfo){
     int minSet[CInfo->HuffBranch];//?
-    int nodeData[CInfo->UnitNum][2];
+    int nodeData[CInfo->UnitNum][2];//存放单元数据
     HuffmanNode *node;
     DynamicArray *Darray;//动态指针数组，存放结点指针
     Darray= Init(CInfo->UnitNum);
     int i=0;
+    printf("Tree constructing\n");
     for(i=0;i<CInfo->UnitNum;++i){
         nodeData[i][0]=i;//编号
         nodeData[i][1]=CInfo->UnitSet[i].appearNum;//权值
         node=(HuffmanNode*) malloc(sizeof (HuffmanNode));
         node->num=i;
         node->value=CInfo->UnitSet[i].appearNum;
-        AssertArray(Darray,i,node);
+        AssertArray(Darray,i,node);//Darray存放HuffmanTree临时结点
     }
     HuffmanTree *head=(HuffmanTree*) malloc(sizeof (HuffmanTree));
     head->branch=CInfo->HuffBranch;
@@ -146,11 +172,12 @@ HuffmanTree *HuffmanTreeConstruct(CompressInfo*CInfo){
     //
     int exten=0;
     while(nodeData[CInfo->UnitNum-1][1]!=0&&nodeData[CInfo->UnitNum-2][1]==0){
-            int j=flag=0;
+            int j=0;
+            int flag=0;
             int temp;
             int start;
             ++exten;
-            for(i=0;i<CInfo->UnitNum;++i){//排序
+            for(i=0;i<CInfo->UnitNum;++i){//将所有结点按权值从小到大排序
                 for(flag=j=i;j<CInfo->UnitNum;++j){
                     if(nodeData[flag][1]>nodeData[j][1]){
                         flag=j;
@@ -165,21 +192,23 @@ HuffmanTree *HuffmanTreeConstruct(CompressInfo*CInfo){
                     nodeData[i][0]=temp;
                 }
             }
-        node=(HuffmanNode*) malloc(sizeof (HuffmanNode));
-        for(i=0;nodeData[i][1]!=0;++i){}//取最小的n个单元
-        if(CInfo->UnitNum-1-i<CInfo->HuffBranch){
+        node=(HuffmanNode*) malloc(sizeof (HuffmanNode));//新开结点
+        node->Child=(HuffmanNode*) malloc(sizeof (HuffmanNode)*CInfo->HuffBranch);
+        HuffmanNode *node1;
+        node1=node->Child;
+        for(i=0;nodeData[i][1]!=0;++i){}//找到最小的非0单元位置
+        if(CInfo->UnitNum-1-i<CInfo->HuffBranch){//若所有非0单元不足n个，往回取0单元不足
             j=i-(CInfo->HuffBranch-CInfo->UnitNum+1+i);
         }else{
             j=i;
         }
-        int start;
-        for(start=j;start<=j+15;start++){
+        for(start=j;start<=j+15&&node1!=NULL;start++,++node1){
             node->value+=nodeData[start][1];
-            if(nodeData[start][1]!=0) {//将权值非0单元从动态数组中删除
-                node->Child[start]= ReadArray(Darray,nodeData[start][0]);
+            if(nodeData[start][1]!=0) {//将单元从动态数组中删除
+                node1= ReadArray(Darray,nodeData[start][0]);
                 DelectArray(Darray, nodeData[start][0]);
             } else{
-                node->Child[start]=NULL;//?
+                node1=NULL;
             }
             nodeData[start][1]=0;
             nodeData[start][0]=0;
@@ -187,9 +216,10 @@ HuffmanTree *HuffmanTreeConstruct(CompressInfo*CInfo){
         nodeData[start][0]=CInfo->UnitNum+exten;
         node->num=CInfo->UnitNum+exten;
         nodeData[start][1]=node->value;
-        AssertArray(Darray,CInfo->UnitNum+exten;node);//合成新结点并存入
+        AssertArray(Darray,CInfo->UnitNum+exten,node);//合成新结点并存入
     }
     head->Head= ReadArray(Darray,nodeData[CInfo->UnitNum-1][0]);
+    printf("Tree constructing done!\n");
     return head;
 }
 
@@ -221,19 +251,23 @@ char*HuffmanCode(HuffmanNode*node,int num,int branch){
 
 void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*targetPath){
     FILE *fpin,*fpout;
+    int i=0;
     fpin= fopen(originPath,"rb+");
     char*TargetPath= StringCombina(targetPath,StringCombina(CInfo->name,CInfo->Extension));
     fpout= fopen(TargetPath,"wb+");
     HeadInfoWrite(fpout,CInfo);
     double basicUnitSize=CInfo->BasicUnitSize;
-    char temp[basicUnitSize*2];
+    char temp[(int)basicUnitSize*2];
     char temp1[(int)basicUnitSize+1];
     char temp2[(int)basicUnitSize+1];
+    char*p=temp;
     while(!feof(fpin)){
         strcpy(temp, ReadString(fpin,basicUnitSize));
         if(!feof(fpin)){
             strcpy(temp1,temp);
-            strcpy(temp2,temp+basicUnitSize);
+            for(i=(int)basicUnitSize+1;i<=2*basicUnitSize-1;++i){
+                temp2[i-(int)basicUnitSize-1]=temp[i];
+            }
             WriteString(fpout,BiChar(DemicalToBinary(GetEle(temp1,1,CInfo),CInfo->HuffBranch)));
             WriteString(fpout,BiChar(DemicalToBinary(GetEle(temp2,1,CInfo),CInfo->HuffBranch)));
         }else{
@@ -269,30 +303,30 @@ void HeadInfoWrite(FILE*fp,CompressInfo*Info){
 }
 char* ReadString(FILE*fp,double basicUnitSize){
     char ch;
+    int i=0;
     char *chSet=(char*) malloc((basicUnitSize*2+2)*sizeof(char));
     int previousNum=0;
     char *out=(char*) malloc((basicUnitSize*2+2)*sizeof (char));
     while((ch=fgetc(fp)&&feof(fp)==0)){
         strcat(chSet,&ch);
         previousNum++;
-        ++CInfo->TotalCharNum;
         if(previousNum==basicUnitSize*2-1){
             char unit1[MaxUnitSize];
-            char unit2[MapUnitSize];
-            char temp;
-            if(basicUnitSize%1!=0){
+            char unit2[MaxUnitSize];
+            unsigned char temp;
+            if(basicUnitSize-(double)((int)basicUnitSize)!=0){
                 for(i=0;i<=basicUnitSize-2;i++){//当基本单元非整字节时(n.5字节）
                     strcat(out,&chSet[i]);//(将前n个字节存入
                 }
                 temp=0xF0;//对于第n+1个字节，取前半段(4bit)后半段记0,存入
-                strcat(out,&(chSet[i]&temp));
+                strcat(out,(chSet[i]&temp));
                 temp=0x0F;//将后半段保留，前半段记0,存入第二个单元
-                strcat(out,&(chSet[i]&temp));
+                strcat(out,(chSet[i]&temp));
                 for(++i;i<basicUnitSize*2;++i){//将第二个单元的剩下n个字符存入
                     strcat(out,&chSet[i]);
                 }
             }else{//为整字节
-                for (i=0;i<basicUnitSize:++i){//存入前半
+                for (i=0;i<basicUnitSize;++i){//存入前半
                     strcat(out,&chSet[i]);
                 }
                 for(;i<basicUnitSize*2;++i){//存入后半段

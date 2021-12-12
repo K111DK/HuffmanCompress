@@ -4,12 +4,12 @@
 #ifndef BASICSTRUCT_H_UTILS_H
 #define BASICSTRUCT_H_UTILS_H
 #include "BasicStruct.h"
-char*DemicalToBinary(char*demical);
+char*DemicalToBinary(char*demical,int branch);
 char*BiChar(char*Binary);
 char*BinaryAdd(char*add1,char *add2);
 char*DemicalToBinary(char *demical,int Branch){
     int branch=log2(Branch)+1;
-    int unitSize=branch+1
+    int unitSize=branch+1;
     char *deString= StringCombina(NULL,demical);
     int size= strlen(demical)-2;
     int u;
@@ -47,6 +47,7 @@ char*BiChar(char*Binary){
 int outLen= strlen(Binary)/8+1;
     char*outChar=(char *) malloc(sizeof (char)*outLen);
     outChar[outLen-1]='\0';
+    int j=0;
     int i=j=0;
     char code=0x0;
     char unit=0x01;
@@ -54,7 +55,7 @@ int outLen= strlen(Binary)/8+1;
         code=0x0;
         unit=0x01;
         for(j=(i+1)*8-1;j>=i*8;--j){
-            code=code|(Binary[j]==0?code;unit);
+            code=code|(Binary[j]==0?code:unit);
             unit=unit<<1;
         }
         outChar[i]=code;
@@ -63,11 +64,11 @@ int outLen= strlen(Binary)/8+1;
 }
 
 char*BinaryAdd(char*add1,char *add2){//二进制字符串加法
-    int l1=l2=0;
+    int l1=0,l2=0;
     l1= strlen(add1);
     l2= strlen(add2);
     int cin=0;
-    int a1=a2=0;
+    int a1=0,a2=0;
     char *out=(char*) malloc(sizeof(char)*l1);
     out[l1-1]='\0';
     if(l1==l2){
@@ -76,13 +77,13 @@ char*BinaryAdd(char*add1,char *add2){//二进制字符串加法
             a1=add1[i]-48;
             a2=add2[i]-48;
             switch (a1+a2+cin) {
-                0:out[i]='0'
+                case 0: out[i]='0';
                         cin=0;break;
-                1:out[i]='1'
+                case 1:out[i]='1';
                         cin=0;break;
-                2:out[i]='0'
+                case 2:out[i]='0';
                         cin=1;break;
-                3:out[i]='1'
+                case 3:out[i]='1';
                         cin=1;break;
             }
         }
