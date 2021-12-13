@@ -31,26 +31,59 @@
 #include <math.h>
 #include <string.h>
 #define MaxUnitSize 40
-
-
-
 char*StringCombina(char*a,char*b){
-    char *c = (char *) malloc(strlen(a) + strlen(b) + 1); //局部变量，用malloc申请内存
-    if (c == NULL) exit (1);
-    char *tempc = c; //把首地址存下来
-    if(a){
-    while (*a != '\0') {
-        *c++ = *a++;
+    char*c;
+    if(!a&&!b){
+        return NULL;
     }
+    if(!b&&a){
+        c = (char *) malloc(strlen(a) + 1);
+    }else if(b&&!a){
+        c=(char*) malloc(strlen(b)+1);
+    }//局部变量，用malloc申请内存
+    else{
+        c=(char*) malloc(strlen(a)+ strlen(b)+1);
+    }
+    if (c == NULL) exit (1);
+        char *tempc = c; //把首地址存下来
+    if(a){
+        while (*a != '\0') {*c++ = *a++;}
     }
     if(b){
-    while ((*c++ = *b++) != '\0') {
-        ;
+        while (*b != '\0') {*c++ = *b++;}
     }
+    if(*c!='\0'){
+        *c='\0';
     }
     //注意，此时指针c已经指向拼接之后的字符串的结尾'\0' !
     return tempc;//返回值是局部malloc申请的指针变量，需在函数调用结束后free之
 }
+char*StringCut(char*originString,int pos){
+    if(originString==NULL){
+        return NULL;
+    }
+    int Le= strlen(originString);
+    if(pos+1>Le){
+        return NULL;
+    }else{
+        char*out=(char*) malloc(sizeof (char)*(pos+2));
+        int i=0;
+        for(i=0;i<=pos;++i){
+            out[i]=originString[i];
+            originString[i]='\0';
+        }
+        out[i]='\0';
+        int j=0;
+            for(j=0;originString[i+j]!='\0';++j){
+                originString[j]=originString[i+j];
+                originString[i+j]='\0';
+            }
+            originString=realloc(originString, strlen(originString)+1);
+        return out;
+    }
+}
+
+
 
 
 typedef struct CompressNode{
@@ -64,10 +97,12 @@ typedef struct CompressInfo{
     int HuffBranch;//(huffman树叉数)
     int TotalCharNum;//文件大小(字节)
     int UnitNum;
-    char name[30];
-    char  Extension[10];//后缀名
+    char *name;
+    char  *Extension;//后缀名
     CompressNode*UnitSet;//符号单元
 }CompressInfo;
+
+
 
 typedef struct HuffmanNode{
     int num;
@@ -89,6 +124,9 @@ DynamicArray* Init(int initSize){
     Darray->PreviousSize=initSize;
     Darray->Array=(HuffmanNode**) malloc(sizeof(HuffmanNode*)*initSize);
 }
+
+
+
 void AssertArray(DynamicArray*Darray,int num,HuffmanNode*node){
     if(num>=Darray->PreviousSize){
         Darray->PreviousSize=num+1;

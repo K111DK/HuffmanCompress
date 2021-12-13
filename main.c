@@ -2,11 +2,13 @@
 #include "utils.h"
 #include "Compress.h"
 int main() {
-CompressInfo *Map;
-HuffmanTree *HF;
-    Map=MapConstruct(1,2,"bee1.mp4");
-    HF= HuffmanTreeConstruct(Map);
-//    HuffCodeConstruct(HF,Map);
-//    CompressFileGen(Map,HF,"bee1.mp4","bee1.hfzip");
+char *a="a";
+char *b="b";
+char *c="c";
+char *d="abc";
+char *f= BiChConverse(d,1);
+    printf("%s--hex:%x\n",f,*f);
+    f= BiChConverse(f,0);
+    printf("%s--hex:%x\n",f,*f);
     return 0;
 }

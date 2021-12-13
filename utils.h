@@ -7,6 +7,8 @@
 char*DemicalToBinary(char*demical,int branch);
 char*BiChar(char*Binary);
 char*BinaryAdd(char*add1,char *add2);
+
+
 char*DemicalToBinary(char *demical,int Branch){
     int branch=log2(Branch)+1;
     int unitSize=branch+1;
@@ -42,6 +44,7 @@ char*DemicalToBinary(char *demical,int Branch){
     }
     return out;
 }
+
 
 char*BiChar(char*Binary){
 int outLen= strlen(Binary)/8+1;
@@ -90,6 +93,60 @@ char*BinaryAdd(char*add1,char *add2){//二进制字符串加法
         return out;
     }else{
         exit(0);
+    }
+}
+
+
+char*BiChConverse(char*inputS,int mode){//字符和字符对应的二进制串转换，1为字符转二进制串，0为反过来
+    char ch;
+    char *out1="\0";
+    char *out="\0";
+    char *BiCode="\0";
+    char a[2]="1\0";
+    a[0]=0x00;
+    char unit=0x01;
+    if(!inputS){
+        return NULL;
+    }
+    if(mode){
+        int i=0;
+        while(inputS[i]!='\0'){
+            unit=0x01;
+            out1="\0";
+            while(unit!=0x00){
+                if((inputS[i]&unit)==unit){//证明该位为1
+                    out1=StringCombina("1",out1);
+                }else{
+                    out1=StringCombina("0",out1);
+                }
+                unit=unit<<1;
+            }
+            out=StringCombina(out,out1);
+            ++i;
+        }
+        return out;
+    } else{
+        int len= strlen(inputS);
+        if(len%8!=0){
+            return NULL;
+        }else{
+            BiCode=StringCombina(BiCode,inputS);
+            while(*BiCode!='\0'){
+                char* a1;
+                int i=0;
+                a[0]=0x00;
+                unit=0x01;
+                a1=StringCut(BiCode,7);
+                for(i=7;i>=0;--i){
+                    if(a1[i]=='1'){
+                        a[0]=a[0]|unit;
+                    }
+                    unit=unit<<1;
+                }
+                out=StringCombina(out,a);
+            }
+            return out;
+        }
     }
 }
 #endif //BASICSTRUCT_H_UTILS_H
