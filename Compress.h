@@ -58,7 +58,6 @@ void WriteString(FILE*fp,char*string);
 char*GetEle(char *input,int mode,CompressInfo*CInfo);
 char*ReadString(FILE*fp,double basicUnitSize);
 
-
 CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
     FILE *fp;
     char *p;
@@ -162,7 +161,6 @@ void CompressUnitInsert(char *InsertUnit,CompressInfo*CInfo){//将基本符号�
         return;
     }
 }
-
 char* ReadString(FILE*fp,double basicUnitSize){//读取basic*2单元
     char c;
     int i=0;
