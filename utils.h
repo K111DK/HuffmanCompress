@@ -7,97 +7,112 @@
 char*DemicalToBinary(char*demical,int branch);
 char*BiChar(char*Binary);
 char*BinaryAdd(char*add1,char *add2);
-
-
-char*DemicalToBinary(char *demical,int Branch){
-    int branch=log2(Branch)+1;
-    int unitSize=branch+1;
-    char *deString= StringCombina(NULL,demical);
-    int size= strlen(demical)-2;
-    int u;
-    char *temp;
-    char*out=(char*) malloc(((strlen(demical)-1)*branch+1)*sizeof(char ));
-    char*unit=(char*)malloc(unitSize*sizeof(char));
+char*StringCut(char*a,int pos);
+char*StringCombina(char*a,char*b);
+int strcmpReg(char*a,char*b,int size);
+int strcmpReg(char*a,char*b,int size){
     int i=0;
-    for(i=0;i<unitSize;++i){
-        unit[i]='0';
-        if(i==unitSize-2){
-            unit[i]='1';
+    for(i=0;i<size;++i){
+        if(!a||!b){
+            return 0;
         }
-        if(i==unitSize-1){
-            unit[i]='\0';
+        if(b[i]==a[i]){
+            continue;
+        } else{
+            return 0;
         }
     }
-    int j=0;
-    for(j=0;j< strlen(demical)-1;++j){
-            u=demical[j]-48;
-            int z=0;
-            for(z=0;z<u;++z){
-                if(z==0){
-                    temp= unit;
-                }
-                temp=BinaryAdd(temp, unit);
-            }
-            for(z=0;z<unitSize;++z){
-                out[j*branch+z]=temp[z];
-            }
-    }
-    return out;
+    return 1;
 }
 
+//char*DemicalToBinary(char *demical,int Branch){
+//    int branch=log2(Branch)+1;
+//    int unitSize=branch+1;
+//    char *deString= StringCombina(NULL,demical);
+//    int size= strlen(demical)-2;
+//    int u;
+//    char *temp;
+//    char*out=(char*) malloc(((strlen(demical)-1)*branch+1)*sizeof(char ));
+//    char*unit=(char*)malloc(unitSize*sizeof(char));
+//    int i=0;
+//    for(i=0;i<unitSize;++i){
+//        unit[i]='0';
+//        if(i==unitSize-2){
+//            unit[i]='1';
+//        }
+//        if(i==unitSize-1){
+//            unit[i]='\0';
+//        }
+//    }
+//    int j=0;
+//    for(j=0;j< strlen(demical)-1;++j){
+//            u=demical[j]-48;
+//            int z=0;
+//            for(z=0;z<u;++z){
+//                if(z==0){
+//                    temp= unit;
+//                }
+//                temp=BinaryAdd(temp, unit);
+//            }
+//            for(z=0;z<unitSize;++z){
+//                out[j*branch+z]=temp[z];
+//            }
+//    }
+//    return out;
+//}
+//
+//
+//char*BiChar(char*Binary){
+//int outLen= strlen(Binary)/8+1;
+//    char*outChar=(char *) malloc(sizeof (char)*outLen);
+//    outChar[outLen-1]='\0';
+//    int j=0;
+//    int i=j=0;
+//    char code=0x0;
+//    char unit=0x01;
+//    for(i=0;i<outLen-1;++i){
+//        code=0x0;
+//        unit=0x01;
+//        for(j=(i+1)*8-1;j>=i*8;--j){
+//            code=code|(Binary[j]==0?code:unit);
+//            unit=unit<<1;
+//        }
+//        outChar[i]=code;
+//    }
+//    return outChar;
+//}
+//
+//char*BinaryAdd(char*add1,char *add2){//二进制字符串加法
+//    int l1=0,l2=0;
+//    l1= strlen(add1);
+//    l2= strlen(add2);
+//    int cin=0;
+//    int a1=0,a2=0;
+//    char *out=(char*) malloc(sizeof(char)*l1);
+//    out[l1-1]='\0';
+//    if(l1==l2){
+//        int i=0;
+//        for(i= l1-1-1;i>=0;--i){
+//            a1=add1[i]-48;
+//            a2=add2[i]-48;
+//            switch (a1+a2+cin) {
+//                case 0: out[i]='0';
+//                        cin=0;break;
+//                case 1:out[i]='1';
+//                        cin=0;break;
+//                case 2:out[i]='0';
+//                        cin=1;break;
+//                case 3:out[i]='1';
+//                        cin=1;break;
+//            }
+//        }
+//        return out;
+//    }else{
+//        exit(0);
+//    }
+//}
 
-char*BiChar(char*Binary){
-int outLen= strlen(Binary)/8+1;
-    char*outChar=(char *) malloc(sizeof (char)*outLen);
-    outChar[outLen-1]='\0';
-    int j=0;
-    int i=j=0;
-    char code=0x0;
-    char unit=0x01;
-    for(i=0;i<outLen-1;++i){
-        code=0x0;
-        unit=0x01;
-        for(j=(i+1)*8-1;j>=i*8;--j){
-            code=code|(Binary[j]==0?code:unit);
-            unit=unit<<1;
-        }
-        outChar[i]=code;
-    }
-    return outChar;
-}
-
-char*BinaryAdd(char*add1,char *add2){//二进制字符串加法
-    int l1=0,l2=0;
-    l1= strlen(add1);
-    l2= strlen(add2);
-    int cin=0;
-    int a1=0,a2=0;
-    char *out=(char*) malloc(sizeof(char)*l1);
-    out[l1-1]='\0';
-    if(l1==l2){
-        int i=0;
-        for(i= l1-1-1;i>=0;--i){
-            a1=add1[i]-48;
-            a2=add2[i]-48;
-            switch (a1+a2+cin) {
-                case 0: out[i]='0';
-                        cin=0;break;
-                case 1:out[i]='1';
-                        cin=0;break;
-                case 2:out[i]='0';
-                        cin=1;break;
-                case 3:out[i]='1';
-                        cin=1;break;
-            }
-        }
-        return out;
-    }else{
-        exit(0);
-    }
-}
-
-
-char*BiChConverse(char*inputS,int mode){//字符和字符对应的二进制串转换，1为字符转二进制串，0为反过来
+char*BiChConverse(char*inputS,int mode,int size){//字符和字符对应的二进制串转换，1为字符转二进制串，0为反过来
     char ch;
     char *out1="\0";
     char *out="\0";
@@ -110,7 +125,7 @@ char*BiChConverse(char*inputS,int mode){//字符和字符对应的二进制串�
     }
     if(mode){
         int i=0;
-        while(inputS[i]!='\0'){
+        while(i!=size){
             unit=0x01;
             out1="\0";
             while(unit!=0x00){
@@ -124,6 +139,7 @@ char*BiChConverse(char*inputS,int mode){//字符和字符对应的二进制串�
             out=StringCombina(out,out1);
             ++i;
         }
+        free(inputS);
         return out;
     } else{
         int len= strlen(inputS);
@@ -147,6 +163,61 @@ char*BiChConverse(char*inputS,int mode){//字符和字符对应的二进制串�
             }
             return out;
         }
+    }
+}
+
+char*StringCombina(char*a,char*b){
+    char*c;
+    if(!a&&!b){
+        return NULL;
+    }
+    if(!b&&a){
+        c = (char *) malloc(strlen(a) + 1);
+    }else if(b&&!a){
+        c=(char*) malloc(strlen(b)+1);
+    }//局部变量，用malloc申请内存
+    else{
+        c=(char*) malloc(strlen(a)+ strlen(b)+1);
+    }
+    if (c == NULL) {
+        printf("error\n");
+        exit (11451415);
+    }
+    char *tempc = c; //把首地址存下来
+    if(a){
+        while (*a != '\0') {*c++ = *a++;}
+    }
+    if(b){
+        while (*b != '\0') {*c++ = *b++;}
+    }
+    if(*c!='\0'){
+        *c='\0';
+    }
+    //注意，此时指针c已经指向拼接之后的字符串的结尾'\0' !
+    return tempc;//返回值是局部malloc申请的指针变量，需在函数调用结束后free之
+}
+char*StringCut(char*originString,int pos){
+    if(originString==NULL){
+        return NULL;
+    }
+    int Le= strlen(originString);
+    if(pos+1>Le){
+        return NULL;
+    }else{
+        char*out=(char*) malloc(sizeof (char)*(pos+2));
+        int i=0;
+        for(i=0;i<=pos;++i){
+            out[i]=originString[i];
+            originString[i]='\0';
+        }
+        out[i]='\0';
+        int j=0;
+        for(j=0;originString[i+j]!='\0';++j){
+            originString[j]=originString[i+j];
+            originString[i+j]='\0';
+        }
+        originString=realloc(originString, strlen(originString)+1);
+        return out;
     }
 }
 #endif //BASICSTRUCT_H_UTILS_H
