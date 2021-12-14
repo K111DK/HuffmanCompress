@@ -11,7 +11,7 @@ int main() {
 //    f= BiChConverse(f,0);
 //    printf("%s--hex:%x\n",f,*f);
 CompressInfo *CInfo;
-    CInfo=MapConstruct(9.5,10,"C:\\Users\\35802\\Desktop\\HuffmanCompress\\bee1.mp4");
+    CInfo=MapConstruct(1,10,"C:\\Users\\35802\\Desktop\\HuffmanCompress\\bee1.mp4");
     MapPrint(CInfo);
     return 0;
 }

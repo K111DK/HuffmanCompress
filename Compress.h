@@ -107,9 +107,7 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
             char*old;
             old=temp;
             new = StringCombina(temp,NULL);
-            temp = BiChConverse(new, 1, temp[(int)(basicUnitSize*2+3)]);
-            free(old);
-            free(new);
+            temp = BiChConverse(new, 1, temp[(int)(basicUnitSize*2)]);
         }
         if(!feof(fp)){//对于非文末串
             temp1= StringCut(temp,(int)(basicUnitSize*8-1));//将两个基本单元二进制字符串中间切半
@@ -117,8 +115,8 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
             ++CInfo->TotalCharNum;//总单元数++
             CompressUnitInsert(temp,CInfo);//记入记录表
             ++CInfo->TotalCharNum;
-            free(temp);//释放单元
-            free(temp1);//
+//            free(temp);//释放单元
+//            free(temp1);//
         }else{//对于文末串
             if(CInfo->TotalCharNum!=0){//开辟空间
                 CInfo->UnitSet= realloc(CInfo->UnitSet,CInfo->UnitNum+1);
@@ -128,7 +126,7 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
             CInfo->UnitSet[CInfo->UnitNum].unit=StringCombina(temp,NULL);
             ++CInfo->UnitNum;
             ++CInfo->TotalCharNum;
-            free(temp);
+//            free(temp);
         }
     }
     printf("Map construct done!\n");
@@ -179,12 +177,11 @@ char* ReadString(FILE*fp,double basicUnitSize){//读取basic*2单元
     }//取满单元
     if(!feof(fp)){//非文件尾，加\0
         chSet[previousNum]='\0';
-
         return chSet;
-    }else{//否则
+    }else{//否
             chSet[previousNum]='\0';
             chSet= realloc(chSet,(int)(basicUnitSize*2+4)*sizeof(char));
-            chSet[(int)(basicUnitSize*2+3)]=previousNum;//最后一个字符的下标+1
+            chSet[(int)(basicUnitSize*2)]=previousNum;//最后一个字符的下标+1
             return chSet;
     }
 }
@@ -349,10 +346,6 @@ void HeadInfoWrite(FILE*fp,CompressInfo*Info){
     }
 }
 //
-
-
-
-
 
 void WriteString(FILE*fp,char*string){
     int len= strlen(string);

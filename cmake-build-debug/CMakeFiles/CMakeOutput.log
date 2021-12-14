@@ -243,3 +243,16 @@ Parsed C implicit link information from above output:
   implicit fwks: []
 
 
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: C:/Program Files/CodeBlocks/MinGW/bin/g++.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.exe"
+
+The CXX compiler identification is GNU, found in "C:/Users/35802/Desktop/HuffmanCompress/cmake-build-debug/CMakeFiles/3.20.2/CompilerIdCXX/a.exe"
+
