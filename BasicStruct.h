@@ -80,20 +80,28 @@ DynamicArray* Init(int initSize){
 }
 
 void AssertArray(DynamicArray*Darray,int num,HuffmanNode*node){
+
     if(num>=Darray->PreviousSize){
         Darray->PreviousSize=num+1;
         Darray->Array= realloc(Darray->Array,(num+1)*sizeof (HuffmanNode*));
     }
     Darray->Array[num]=node;
 }
+
 HuffmanNode* ReadArray(DynamicArray*Darray,int num){
     if(num>=Darray->PreviousSize){
         return NULL;
     }else{
+if(Darray->Array[num]==NULL){
+    printf("1\n");
+}
         return Darray->Array[num];
     }
 }
 void DelectArray(DynamicArray*Darray,int num){
+    if(num==285){
+        printf("1\n");
+    }
     if(num>=Darray->PreviousSize){
         return;
     }else{
