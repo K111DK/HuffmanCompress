@@ -39,7 +39,7 @@
 typedef struct CompressNode{
     char *unit;//单元翻译过来的二进制码字符串
     char *HuffCode;//huffman编码的二进制形式
-    int appearNum;//该单元出现次数
+    unsigned int appearNum;//该单元出现次数
 }CompressNode;
 
 typedef struct CompressInfo{

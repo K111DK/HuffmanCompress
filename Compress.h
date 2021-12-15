@@ -67,6 +67,7 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
         printf("fail to open\n");
         exit(0);
     }
+    CompressNode *head;
     CompressInfo *CInfo=(CompressInfo*) malloc(sizeof (CompressInfo));
 
     CInfo->BasicUnitSize=basicUnitSize;
@@ -74,8 +75,7 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
     CInfo->TotalCharNum=0;
     CInfo->UnitNum=0;
     CInfo->Extension=(char*) malloc(sizeof (char)*20);
-    CInfo->name=(char *) malloc(sizeof (char )*40);
-
+    CInfo->name=(char *) malloc(sizeof (char )*80);
     //记录后缀名及文件名
     int i,j,z;
     i= strlen(originPath);//从文件最末往前遍历直至'.'，目的是截取后缀名
@@ -119,6 +119,9 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
         }else{//对于文末串
             if(CInfo->TotalCharNum!=0){//开辟空间
                 CInfo->UnitSet= realloc(CInfo->UnitSet,CInfo->UnitNum+1);
+                if(!CInfo->UnitSet){
+                    exit(114514);
+                }
             }else{
                 CInfo->UnitSet=(CompressNode*) malloc(sizeof (CompressNode));
             }
@@ -150,11 +153,20 @@ void CompressUnitInsert(char *InsertUnit,CompressInfo*CInfo){//将基本符号�
         for(i=0;i<CInfo->UnitNum;++i){
             if(strcmp(node->unit,InsertUnit)==0){//若在字库中匹配到
                     ++node->appearNum;//该单元+1
+//                    if(strcmp(node->unit,"01100010")==0){
+//
+//                    }
                 return;
+            }
+            if(i==CInfo->UnitNum){
+                break;
             }
             ++node;
         }//不存在
-        CInfo->UnitSet=realloc(CInfo->UnitSet,(CInfo->UnitNum+1)*sizeof (CompressNode));
+        CInfo->UnitSet=realloc(CInfo->UnitSet,(CInfo->UnitNum+3)*sizeof (CompressNode));
+            if(!CInfo->UnitSet){
+                exit(0);
+            }
         CInfo->UnitSet[CInfo->UnitNum].unit=StringCombina(InsertUnit,NULL);
         CInfo->UnitSet[CInfo->UnitNum].appearNum=1;
         ++CInfo->UnitNum;
@@ -179,6 +191,9 @@ char* ReadString(FILE*fp,double basicUnitSize){//读取basic*2单元
     }else{//否
             chSet[previousNum]='\0';
             chSet= realloc(chSet,(int)(basicUnitSize*2+4)*sizeof(char));
+            if(!chSet){
+                exit(11451415);
+            }
             chSet[(int)(basicUnitSize*2)]=previousNum;//最后一个字符的下标+1
             return chSet;
     }
@@ -320,56 +335,56 @@ char* ReadString(FILE*fp,double basicUnitSize){//读取basic*2单元
 //}
 
 //
-CompressInfo *HeadInfoRead(FILE*fp){
-    CompressInfo *Info;
-    fread(Info,sizeof (CompressInfo),1,fp);
-    Info->UnitSet=(CompressNode*) malloc(sizeof (CompressNode)*Info->UnitNum);
-    CompressNode *node=Info->UnitSet;
-    int size=Info->UnitNum;
-    int i=0;
-    for(i=0;i<size;++i){
-        fread(node,sizeof(CompressNode),1,fp);
-        node++;
-    }
-    return Info;
-}
-void HeadInfoWrite(FILE*fp,CompressInfo*Info){
-    fwrite(Info,sizeof (CompressInfo),1,fp);
-    CompressNode *node=Info->UnitSet;
-    int size=Info->UnitNum;
-    int i=0;
-    for(i=0;i<size;++i){
-        fwrite(node,sizeof(CompressNode),1,fp);
-        node++;
-    }
-}
+//CompressInfo *HeadInfoRead(FILE*fp){
+//    CompressInfo *Info;
+//    fread(Info,sizeof (CompressInfo),1,fp);
+//    Info->UnitSet=(CompressNode*) malloc(sizeof (CompressNode)*Info->UnitNum);
+//    CompressNode *node=Info->UnitSet;
+//    int size=Info->UnitNum;
+//    int i=0;
+//    for(i=0;i<size;++i){
+//        fread(node,sizeof(CompressNode),1,fp);
+//        node++;
+//    }
+//    return Info;
+//}
+//void HeadInfoWrite(FILE*fp,CompressInfo*Info){
+//    fwrite(Info,sizeof (CompressInfo),1,fp);
+//    CompressNode *node=Info->UnitSet;
+//    int size=Info->UnitNum;
+//    int i=0;
+//    for(i=0;i<size;++i){
+//        fwrite(node,sizeof(CompressNode),1,fp);
+//        node++;
+//    }
+//}
+////
 //
-
-void WriteString(FILE*fp,char*string){
-    int len= strlen(string);
-    if(len<=0){
-        exit(0);
-    }
-    fwrite(string,sizeof (char ),len,fp);
-}
-
-char*GetEle(char*input,int mode,CompressInfo*CInfo){//1为压缩映射 2为解压映射
-        int size=CInfo->UnitNum-1;
-        CompressNode *node=CInfo->UnitSet;
-        int i;
-        for(i=0;i<=size;++i){
-            if(mode==1){
-                if(strcmp(input,node->unit)==0){
-                    return node->HuffCode;
-            }
-            }else{
-                if(strcmp(input,node->HuffCode)==0){
-                    return node->unit;
-                }
-            }
-            node++;
-        }
-}
+//void WriteString(FILE*fp,char*string){
+//    int len= strlen(string);
+//    if(len<=0){
+//        exit(0);
+//    }
+//    fwrite(string,sizeof (char ),len,fp);
+//}
+//
+//char*GetEle(char*input,int mode,CompressInfo*CInfo){//1为压缩映射 2为解压映射
+//        int size=CInfo->UnitNum-1;
+//        CompressNode *node=CInfo->UnitSet;
+//        int i;
+//        for(i=0;i<=size;++i){
+//            if(mode==1){
+//                if(strcmp(input,node->unit)==0){
+//                    return node->HuffCode;
+//            }
+//            }else{
+//                if(strcmp(input,node->HuffCode)==0){
+//                    return node->unit;
+//                }
+//            }
+//            node++;
+//        }
+//}
 void MapPrint(CompressInfo*CInfo){
     printf("total char num:%d\n",CInfo->TotalCharNum);
     printf("total unitset num:%d\n",CInfo->UnitNum);
